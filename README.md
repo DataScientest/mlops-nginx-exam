@@ -12,16 +12,21 @@ Pour cet examen, vous travaillerez avec un modèle de reconnaissance de sentimen
 
 ```
 mlops-nginx-exam/
-├── app/
-│   ├── model.joblib     # Modèle pré-entraîné
-│   └── requirements.txt # Dépendances Python de l'API
-├── nginx/
-│   ├── nginx.conf       # Votre configuration Nginx à compléter
-│   ├── certs/           # Pour vos certificats SSL
-│   └── .htpasswd        # Pour l'authentification basique
-├── docker-compose.yml   # Votre fichier Docker Compose à compléter
-├── Makefile             # Votre Makefile à compléter
-└── README.md
+├── deployments
+│   ├── nginx/
+│   │   ├── certs/              # Pour vos certificats SSL
+│   │   ├── .htpasswd           # Pour l'authentification basique
+│   │   ├── Dockerfile          # Le Dockerfile nginx à compléter
+│   │   └── nginx.conf          # Votre configuration Nginx à compléter
+│   ├── prometheus/
+│   │   └── prometheus.yml      # Le fichier de configuration Prometheus
+├── src
+│   ├── api/
+│   │   ├── model.joblib        # Modèle ML pré-entraîné
+│   │   └── requirements.txt    # Dépendances Python de l'API
+├── docker-compose.yml          # Votre fichier Docker Compose à compléter
+├── Makefile                    # Votre Makefile à compléter
+└── README.md                   # Ce fichier
 ```
 
 ### Objectif du Projet
@@ -34,28 +39,50 @@ Mettre en place une architecture conteneurisée utilisant Nginx comme point d'en
 
 3.  **HTTPS (SSL/TLS)** : Toutes les communications vers Nginx doivent être sécurisées via HTTPS, en utilisant des certificats auto-signés. Le trafic HTTP doit être redirigé vers HTTPS.
 
-1. **Préparation du Projet** : 
-    - Clonez ce dépôt Git.
-    
-2. **Lancez tous les services** : `make start-project`.
-    - Vous pouvez accèder aux interfaces :
-        - Prometheus UI : `http://localhost:9090`
-        - Grafana UI : `http://localhost:3000` (admin:admin)
+4.  **Authentification Basique** : L'accès à l'endpoint de prédiction (`/predict`) doit être protégé par une authentification basique (`username/password`).
 
-3. **Tester le projet** :
-    - Vous pouvez effectuer un test par défaut avec `make test-api`.
+5.  **Rate Limiting** : L'endpoint de prédiction (`/predict`) doit être protégé par une limitation de débit (par exemple, 10 requêtes par seconde par adresse IP).
 
-4. **Test du Routage A/B Testing** :
-    - l'entête `X-Experiment-Group: debug` vous fait utiliser le service B (`api-v2`).
-    - Vous pouvez effectuer un test par défaut avec `make test-api-debug`.
-    - Vérifier la réponse, elle devrait contenir plus d'informations à propos de la prédiction du modèle.
+6.  **A/B Testing** :
 
     - Vous devrez déployer deux versions de l'API de modèle (par exemple, `api-v1` et `api-v2`). Ces versions peuvent être simulées en modifiant légèrement la réponse de l'API (ex: ajouter un champ "version": "v1" ou "version": "v2" dans la réponse JSON).
 
     - Nginx doit router le trafic vers la version v2 de l'API si la requête contient un en-tête HTTP spécifique (par exemple, `X-Experiment-Group: debug`).
 
-- Vous pouvez générer un nouveau `model.joblib` avec le fichier `src/gen_model.py`.
-- On pourrait également tester la charge et le rate limiting sur l'API principale avec la commande suivante :
-```bash
-for i in {1..100}; do curl -s -o /dev/null -w "%{http_code}\n" -X POST "https://localhost/predict" -H "Content-Type: application/json" -d '{"sentence": "Oh yeah, that was soooo cool!"}' --user "admin:admin" --cacert ./deployments/nginx/certs/nginx.crt; done
-```
+    - Si cet en-tête n'est pas présent, le trafic doit être routé vers la version v1 par défaut.
+
+### Livrables
+
+Un dépôt Git contenant :
+
+- Tous les Dockerfiles nécessaires.
+
+- Le fichier docker-compose.yml configuré pour orchestrer tous les services (Nginx, API v1, API v2, etc.).
+
+- Le fichier `nginx.conf` avec toutes les configurations requises (reverse proxy, SSL, équilibrage de charge, authentification, limitation de débit, et le routage A/B).
+
+- Les scripts ou fichiers auxiliaires (ex: nginx/certs/, nginx/.htpasswd).
+
+- Le code de l'API (`src/api/main.py`, `src/api/requirements.txt`, `src/api/model.joblib`).
+
+### Évaluation
+
+Votre projet sera évalué sur :
+
+- La conformité de l'architecture aux exigences (tous les services sont conteneurisés et orchestrés).
+
+- Le bon fonctionnement de chaque fonctionnalité :
+
+    - Accès à l'API via Nginx.
+
+    - Équilibrage de charge visible (par exemple, en observant les logs des instances API).
+
+    - Accès HTTPS fonctionnel avec certificat auto-signé.
+
+    - Authentification basique fonctionnelle.
+
+    - Limitation de débit qui rejette les requêtes excessives.
+
+    - Le routage A/B testing fonctionne comme spécifié (le trafic est bien redirigé vers la bonne version de l'API en fonction de l'en-tête `X-Experiment-Group`).
+
+    - La clarté de votre configuration Nginx et Docker Compose.
