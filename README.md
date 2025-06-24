@@ -6,7 +6,7 @@ Pour cet examen, vous travaillerez avec un modèle de reconnaissance de sentimen
 
 - **Modèle** : Un modèle model.joblib pré-entraîné.
 
-- **API** : Une API FastAPI simple (similaire à celle du cours) qui prend une phrase en entrée et retourne le prédit.
+- **API** : Une API FastAPI simple (similaire à celle du cours) qui prend une phrase en entrée et retourne le sentiment prédit.
 
 ### Fichiers Fournis :
 
