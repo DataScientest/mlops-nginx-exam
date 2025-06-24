@@ -67,6 +67,9 @@ Une archive (.tar ou .zip) contenant :
 
 - Le code de l'API (`src/api/main.py`, `src/api/requirements.txt`, `src/api/model.joblib`).
 
+- le `Makefile` contenant les commandes nécessaires pour lancer et tester votre application
+(Par exemple, la commande qui permet de tester une requête à l'API avec l'en-tête pour la version v2).
+
 ### Évaluation
 
 Votre projet sera évalué sur :
