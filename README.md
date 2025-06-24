@@ -53,15 +53,17 @@ Mettre en place une architecture conteneurisée utilisant Nginx comme point d'en
 
 ### Livrables
 
-Un dépôt Git contenant :
+Une archive (.tar ou .zip) contenant :
+
+- La structure de fichiers actuelles, à laquelle vous ajouterez :
 
 - Tous les Dockerfiles nécessaires.
 
 - Le fichier docker-compose.yml configuré pour orchestrer tous les services (Nginx, API v1, API v2, etc.).
 
-- Le fichier `nginx.conf` avec toutes les configurations requises (reverse proxy, SSL, équilibrage de charge, authentification, limitation de débit, et le routage A/B).
+- Le fichier `nginx.conf` rempli avec toutes les configurations requises (reverse proxy, SSL, équilibrage de charge, authentification, limitation de débit, et le routage A/B).
 
-- Les scripts ou fichiers auxiliaires (ex: nginx/certs/, nginx/.htpasswd).
+- Les scripts ou fichiers auxiliaires (ex: `deployments/nginx/certs/`, `deployments/nginx/.htpasswd`).
 
 - Le code de l'API (`src/api/main.py`, `src/api/requirements.txt`, `src/api/model.joblib`).
 
