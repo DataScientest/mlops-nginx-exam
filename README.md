@@ -8,7 +8,7 @@ Pour cet examen, vous travaillerez avec un modèle de reconnaissance de sentimen
 
 - **API** : Une API FastAPI simple (similaire à celle du cours) qui prend une phrase en entrée et retourne le prédit.
 
-### Fichiers Fournis** :
+### Fichiers Fournis :
 
 ```
 mlops-nginx-exam/
